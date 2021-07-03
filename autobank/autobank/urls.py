@@ -16,11 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from main.views import splash # add our html files here
+from main.views import splash, login_, logout_, add_purchase # add our html files here
 from django.urls import path # avoid regex
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # add our paths here
-    path('', splash)
+    path('', splash),
+    path("login", login_, name="login"),
+    path("logout", logout_, name="logout"),
+    path('add_purchase', add_purchase, name='add_purchase')
 ]

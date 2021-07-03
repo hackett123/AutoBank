@@ -1,0 +1,106 @@
+{% extends 'master.html' %}
+{% block body %}
+<h1 class="title">
+    AbaBaba
+</h1>
+
+<h2>You are currently logged in as <strong>{{user.first_name}}</strong></h2>
+</br>
+<!-- <h2 class="label">Student courses: </h2>
+<p>
+    {% if student_courses %}
+    {% for course in student_courses %}
+    <a href="/course?course_id={{course.id}}">{{course}}</a></br>
+    {%endfor%}
+    {% else %}
+    No courses
+    {% endif %}
+</p>
+</br>
+<h2 class="label">TA courses: </h2>
+<p>
+    {% if ta_courses %}
+    {% for course in ta_courses %}
+    <a href="/course?course_id={{course.id}}">{{course}}</a></br>
+    {%endfor%}
+    {% else %}
+    No courses
+    {% endif %}
+</p>
+</br>
+<h2 class="label">Instructor courses: </h2>
+<p>
+    {% if instructor_courses %}
+    {% for course in instructor_courses %}
+    <a href="/course?course_id={{course.id}}">{{course}}</a></br>
+    {%endfor%}
+    {% else %}
+    No courses
+    {% endif %}
+</p>
+</br>
+<h2>
+    <a href="/join_course"> Join Course</a>
+</h2>
+<h2>
+    <a href="/create_course"> Create Course as Instructor</a>
+</h2>
+ -->
+ <a href="/logout"> Logout</a>
+</br>
+ <a href="/statistics"> Stats</a>
+</br>
+<h2 class="title">
+    Add Purchase
+</h2>
+<form method="POST" action="/add_purchase">
+    {% csrf_token %}
+    <div>
+        <label class="label">Price:</label>
+        <input name="price" class="input is-primary" type="text" placeholder="Price">
+    </div>
+    </br>
+    <div>
+        <label class="label">Shop:</label>
+        <input name="shop" class="input is-primary" type="text" placeholder="Shop">
+    </div>
+    </br>
+    <div>
+        <label class="label">Description (optional):</label>
+        <input name="description" class="input is-primary" type="text" placeholder="Description">
+    </div>
+    <div>
+        <label class="label">Amount:</label>
+        <input name="amount" class="input is-primary" type="text" placeholder="1">
+    </div>
+    <div class="select is-multiple is-primary">
+        <label class="label">Bought For:</label>
+        <select class="js-example-basic-multiple" name="for_choices" multiple="multiple">
+            <option value='MICHELLE'>just michelle</option>
+            <option value='MICHAEL'>just michael</option>
+            <option value='BOTH'>both of us</option>
+            <!-- {% for choice in for_choices %}
+            <option value="{{student.id}}">{{student}}</option>
+            {% endfor %} -->
+        </select>
+    </div>
+    <div class="select is-multiple is-primary">
+        <label class="label">Purchase Type:</label>
+        <select class="js-example-basic-multiple" name="type_choices" multiple="multiple">
+            <option value='EAT_OUT'>eating out</option>
+            <option value='HOUSE_SUPPLIES'>small house item purchase</option>
+            <option value='TAKE_OUT'>take out</option>
+            <option value='COFFEE'>coffee</option>
+            <!-- {% for choice in for_choices %}
+            <option value="{{student.id}}">{{student}}</option>
+            {% endfor %} -->
+        </select>
+    </div>
+
+    </div>
+    </br>
+    </br>
+    <button type="submit" class="button is-primary">Add</button>
+</form>
+
+{% endblock %}

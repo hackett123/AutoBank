@@ -46,9 +46,9 @@
     <a href="/create_course"> Create Course as Instructor</a>
 </h2>
  -->
- <a href="/logout"> Logout</a>
+<a href="/logout"> Logout</a>
 </br>
- <a href="/statistics"> Stats</a>
+<a href="/statistics"> Stats</a>
 </br>
 <h2 class="title">
     Add Purchase
@@ -84,19 +84,13 @@
             {% endfor %} -->
         </select>
     </div>
+    <label class="label">Purchase Type:</label>
     <div class="select is-multiple is-primary">
-        <label class="label">Purchase Type:</label>
         <select class="js-example-basic-multiple" name="type_choices" multiple="multiple">
-            <option value='EAT_OUT'>eating out</option>
-            <option value='HOUSE_SUPPLIES'>small house item purchase</option>
-            <option value='TAKE_OUT'>take out</option>
-            <option value='COFFEE'>coffee</option>
-            <!-- {% for choice in for_choices %}
-            <option value="{{student.id}}">{{student}}</option>
-            {% endfor %} -->
+            {% for purchase_type in purchase_types %}
+            <option value="{{purchase_type.type}}">{{purchase_type.type}}</option>
+            {% endfor %}
         </select>
-    </div>
-
     </div>
     </br>
     </br>

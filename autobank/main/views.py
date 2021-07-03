@@ -13,19 +13,8 @@ from django.http import HttpResponse
 
 def splash(request):
     if request.user.is_authenticated:
-        return render(request, 'home.html', {'user': request.user})
-        # print(Course.objects.all())
-        # ta_course_ids = request.user.TA_courses.all()
-        # ta_courses = Course.objects.filter(id__in=ta_course_ids)
-
-        # instructor_course_ids = request.user.instructor_courses.all()
-        # instructor_courses = Course.objects.filter(id__in=instructor_course_ids)
-
-        # student_course_ids = request.user.student_courses.all()
-        # student_courses = Course.objects.filter(id__in=student_course_ids)
-        # # courses = [course for course in Course.objects.all() if request.user ==
-        # #            course.instructor or request.user in course.students.all() or request.user in course.ta_staff.all()]
-        # return render(request, "home.html", {"user": request.user, "ta_courses": ta_courses, "instructor_courses": instructor_courses, "student_courses": student_courses})
+        types = PurchaseType.objects.all()
+        return render(request, 'home.html', {'user': request.user, 'purchase_types': types})
     return render(request, "splash.html", {})
 
 
@@ -53,14 +42,23 @@ def add_purchase(request):
         bought_for = request.POST.getlist("for_choices")[0]
         purchase_type = request.POST.getlist("type_choices")[0]
 
+        print(f'purchase_type received is {purchase_type}')
+        purchase_type_obj = PurchaseType.objects.get(type=purchase_type)
+        print(f'object found is {purchase_type_obj}')
+        print(f'Creating purchase with fields {request.POST["price"]}', 
+            f'{request.POST["shop"]}, {request.POST["description"]}, {request.POST["amount"]}', bought_for, purchase_type_obj, User.objects.get(username=request.user))
+
+
         purchase = Purchase.objects.create(
             price=request.POST['price'],
             shop=request.POST['shop'],
             description=request.POST['description'],
             amount=request.POST['amount'],
             bought_for=bought_for,
-            purchase_type=purchase_type,
+            purchase_type=purchase_type_obj,
             purchased_by=User.objects.get(username=request.user)
         )
-        return redirect('')
-    else: return redirect('')
+
+        purchase.save()
+        return redirect('/')
+    else: return redirect('/')

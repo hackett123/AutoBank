@@ -4,48 +4,22 @@
     AbaBaba
 </h1>
 
-<h2>You are currently logged in as <strong>{{user.first_name}}</strong></h2>
-</br>
-<!-- <h2 class="label">Student courses: </h2>
-<p>
-    {% if student_courses %}
-    {% for course in student_courses %}
-    <a href="/course?course_id={{course.id}}">{{course}}</a></br>
-    {%endfor%}
-    {% else %}
-    No courses
-    {% endif %}
-</p>
-</br>
-<h2 class="label">TA courses: </h2>
-<p>
-    {% if ta_courses %}
-    {% for course in ta_courses %}
-    <a href="/course?course_id={{course.id}}">{{course}}</a></br>
-    {%endfor%}
-    {% else %}
-    No courses
-    {% endif %}
-</p>
-</br>
-<h2 class="label">Instructor courses: </h2>
-<p>
-    {% if instructor_courses %}
-    {% for course in instructor_courses %}
-    <a href="/course?course_id={{course.id}}">{{course}}</a></br>
-    {%endfor%}
-    {% else %}
-    No courses
-    {% endif %}
-</p>
-</br>
-<h2>
-    <a href="/join_course"> Join Course</a>
+<p>You are currently logged in as <strong>{{user.first_name}}</strong></p>
+
+<br>
+
+<h2 class="title">
+    Directions
 </h2>
-<h2>
-    <a href="/create_course"> Create Course as Instructor</a>
-</h2>
- -->
+<p>
+Add purchases to keep track of our spending across different categories. In the near future, we'll
+have a way to aggregate by types of purchases, over dates and time, who is spending the most, etc.
+
+If you don't see an option you're looking for in <strong>Shop</strong> or <strong>Purchase Type</strong>,
+scroll down to add additional options to the database.
+</p>
+
+</br>
 <a href="/logout"> Logout</a>
 </br>
 <a href="/statistics"> Stats</a>
@@ -56,13 +30,23 @@
 <form method="POST" action="/add_purchase">
     {% csrf_token %}
     <div>
+        <label class="label">Date:</label>
+        <input name="date" class="input is-primary" type="date" placeholder="today">
+    </div>
+    <div>
         <label class="label">Price:</label>
         <input name="price" class="input is-primary" type="text" placeholder="Price">
     </div>
     </br>
     <div>
         <label class="label">Shop:</label>
-        <input name="shop" class="input is-primary" type="text" placeholder="Shop">
+        <div class="select is-multiple is-primary">
+            <select class="js-example-basic-multiple" name="shop" multiple="multiple">
+                {% for shop in shops %}
+                <option value="{{shop.name}}">{{shop.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
     </div>
     </br>
     <div>
@@ -79,9 +63,6 @@
             <option value='MICHELLE'>just michelle</option>
             <option value='MICHAEL'>just michael</option>
             <option value='BOTH'>both of us</option>
-            <!-- {% for choice in for_choices %}
-            <option value="{{student.id}}">{{student}}</option>
-            {% endfor %} -->
         </select>
     </div>
     <label class="label">Purchase Type:</label>
@@ -93,6 +74,34 @@
         </select>
     </div>
     </br>
+    </br>
+    <button type="submit" class="button is-primary">Add</button>
+</form>
+</br>
+
+<h2 class="title">
+    New Purchase Type
+</h2>
+<form method="POST" action="/new_purchase_type">
+    {% csrf_token %}
+    <div>
+        <label class="label">Type:</label>
+        <input name="type" class="input is-primary" type="text" placeholder="Type">
+    </div>
+    </br>
+    <button type="submit" class="button is-primary">Add</button>
+</form>
+</br>
+<h2 class="title">
+    New Shop
+</h2>
+</br>
+<form method="POST" action="/new_shop">
+    {% csrf_token %}
+    <div>
+        <label class="label">Shop:</label>
+        <input name="shop" class="input is-primary" type="text" placeholder="Shop Name">
+    </div>
     </br>
     <button type="submit" class="button is-primary">Add</button>
 </form>

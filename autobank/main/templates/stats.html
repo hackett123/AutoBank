@@ -1,0 +1,42 @@
+{% extends 'master.html' %}
+{% block body %}
+<h1 class="title">
+    AbaBaba
+</h1>
+
+<div>
+    <p class="subtitle">
+        Welcome to AbaBaba Stats!
+        </br>
+        <a href="/">Home</a>
+        </br>
+        <a href="/logout">Log Out</a>
+        </br>
+    </p>
+</div>
+</br>
+<div>
+    <h3 class="title">All Purchases (By Purchase Type)</h3>
+    {% for purchase_type in purchase_types %}
+    
+    <strong>{{purchase_type}} sum: ${{ type_sum_prices|get_item:purchase_type }}</strong>
+    <ul>
+        {% for purchase in purchase_type.purchases.all %}
+        <li>{{purchase}}</li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+</div>
+</br>
+<div>
+    <h3 class="title">All Purchases (By Shop)</h3>
+    {% for shop in shops %}
+    <strong>{{shop}} sum: ${{ shop_sum_prices|get_item:shop }}</strong>
+    <ul>
+        {% for purchase in shop.purchases.all %}
+        <li>{{purchase}}</li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+</div>
+{% endblock %}

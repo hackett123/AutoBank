@@ -19,6 +19,18 @@ def splash(request):
         return render(request, 'home.html', {'user': request.user, 'purchase_types': types, 'shops': shops})
     return render(request, "splash.html", {})
 
+def stats(request):
+    if request.user.is_authenticated:
+        types = PurchaseType.objects.all()
+        shops = Shop.objects.all()
+
+        # make dictionaries of (category) -> (sum price) for both dimensions of data
+        type_sum_prices = {purchase_type:sum([purchase.price for purchase in list(purchase_type.purchases.all())]) for purchase_type in types}
+        shop_sum_prices = {shop:sum([purchase.price for purchase in list(shop.purchases.all())]) for shop in shops}
+
+        return render(request, 'stats.html', {'purchase_types': types, 'shops': shops, 'type_sum_prices': type_sum_prices, 'shop_sum_prices': shop_sum_prices})
+    return render(request, "splash.html", {})
+
 
 def login_(request):
     if request.method == "POST":
@@ -83,3 +95,10 @@ def new_shop(request):
             new_shop = Shop.objects.create(name=request.POST['shop'])
             new_shop.save()
     return redirect('/')
+
+from django.template.defaulttags import register
+
+# django filter shit
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)

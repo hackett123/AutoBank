@@ -32,3 +32,6 @@ class Purchase(models.Model):
 
     def __str__(self):
         return f'{self.amount} of ${self.price} at {self.shop.name} for "{self.description}" by {self.purchased_by.username} on {self.date}'
+
+    def __add__(self, o):
+        return self.price + o.price

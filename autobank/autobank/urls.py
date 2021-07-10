@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from main.views import splash, login_, logout_, add_purchase, new_purchase_type, new_shop
+from main.views import splash, login_, logout_, add_purchase, new_purchase_type, new_shop, stats
 from django.urls import path # avoid regex
 
 urlpatterns = [
@@ -28,4 +28,5 @@ urlpatterns = [
     path('add_purchase', add_purchase, name='add_purchase'),
     path('new_purchase_type', new_purchase_type, name='new_purchase_type'),
     path('new_shop', new_shop, name='new_shop'),
+    path('stats', stats, name='stats'),
 ]

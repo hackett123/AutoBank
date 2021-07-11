@@ -1,3 +1,4 @@
+from django.template.defaulttags import register
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -19,16 +20,65 @@ def splash(request):
         return render(request, 'home.html', {'user': request.user, 'purchase_types': types, 'shops': shops})
     return render(request, "splash.html", {})
 
+
+def purchases_between(start_date, end_date):
+    '''
+    retrieve all purchases made between [start_date, ..., end_date] inclusive.
+    returns tuple (purchase_type_purchases, shop_purchases) where each is a dictionary
+    from type / shop -> [purchase list]
+    '''
+    types = PurchaseType.objects.all()
+    shops = Shop.objects.all()
+
+    purchase_type_purchases = dict()
+    for purchase_type in types:
+        purchase_type_purchases[purchase_type] = purchase_type.purchases.filter(
+            date__range=[start_date, end_date])
+
+    shop_purchases = dict()
+    for shop in shops:
+        shop_purchases[shop] = shop.purchases.filter(
+            date__range=[start_date, end_date])
+
+    return (purchase_type_purchases, shop_purchases)
+
+
 def stats(request):
     if request.user.is_authenticated:
-        types = PurchaseType.objects.all()
-        shops = Shop.objects.all()
+        start_date, end_date = date(2021, 7, 1), date.today()
+        if 'start_date' in request.GET and 'end_date' in request.GET and request.GET['start_date'] and request.GET['end_date']:
+            start_date, end_date = request.GET['start_date'], request.GET['end_date']
+        purchase_type_purchases, shop_purchases = purchases_between(start_date, end_date)
+            
+        # type_sum_prices = {purchase_type:sum([purchase.price for purchase in purchases]) for purchase_type,purchases in purchase_type_purchases.items()}
+        type_sum_prices = dict()
+        for purchase_type, purchases in purchase_type_purchases.items():
+            type_sum_prices[purchase_type] = sum(
+                [purchase.price for purchase in purchases])
 
-        # make dictionaries of (category) -> (sum price) for both dimensions of data
-        type_sum_prices = {purchase_type:sum([purchase.price for purchase in list(purchase_type.purchases.all())]) for purchase_type in types}
-        shop_sum_prices = {shop:sum([purchase.price for purchase in list(shop.purchases.all())]) for shop in shops}
+        shop_sum_prices = dict()
+        for shop, purchases in shop_purchases.items():
+            shop_sum_prices[shop] = sum(
+                [purchase.price for purchase in purchases])
 
-        return render(request, 'stats.html', {'purchase_types': types, 'shops': shops, 'type_sum_prices': type_sum_prices, 'shop_sum_prices': shop_sum_prices})
+        total_spent = sum(shop_sum_prices.values())
+
+        return render(request, 'stats.html', {'purchase_type_purchases': purchase_type_purchases,
+                                              'shop_purchases': shop_purchases,
+                                              'type_sum_prices': type_sum_prices,
+                                              'shop_sum_prices': shop_sum_prices,
+                                              'start_date': start_date,
+                                              'end_date': end_date,
+                                              'total': total_spent})
+
+        # types = PurchaseType.objects.all()
+        # shops = Shop.objects.all()
+
+        # # make dictionaries of (category) -> (sum price) for both dimensions of data
+        # type_sum_prices = {purchase_type:sum([purchase.price for purchase in list(purchase_type.purchases.all())]) for purchase_type in types}
+        # shop_sum_prices = {shop:sum([purchase.price for purchase in list(shop.purchases.all())]) for shop in shops}
+
+        # return render(request, 'stats.html', {'purchase_types': types, 'shops': shops, 'type_sum_prices': type_sum_prices, 'shop_sum_prices': shop_sum_prices})
     return render(request, "splash.html", {})
 
 
@@ -50,6 +100,7 @@ def logout_(request):
     logout(request)
     return redirect("/")
 
+
 @login_required
 def add_recurring(request):
     if request.method == 'POST':
@@ -64,6 +115,7 @@ def add_recurring(request):
         recurring.save()
     return redirect('/')
 
+
 @login_required
 def add_purchase(request):
     if request.method == 'POST':
@@ -72,8 +124,8 @@ def add_purchase(request):
         print(f'purchase_type received is {purchase_type}')
         purchase_type_obj = PurchaseType.objects.get(type=purchase_type)
         print(f'object found is {purchase_type_obj}')
-        print(f'Creating purchase with fields {request.POST["price"]}', 
-            f'{request.POST["shop"]}, {request.POST["description"]}, {request.POST["amount"]}', purchase_type_obj, User.objects.get(username=request.user))
+        print(f'Creating purchase with fields {request.POST["price"]}',
+              f'{request.POST["shop"]}, {request.POST["description"]}, {request.POST["amount"]}', purchase_type_obj, User.objects.get(username=request.user))
 
         # if amount is null default to 1
         amount = request.POST['amount'] if request.POST['amount'] else 1
@@ -92,7 +144,9 @@ def add_purchase(request):
 
         purchase.save()
         return redirect('/')
-    else: return redirect('/')
+    else:
+        return redirect('/')
+
 
 @login_required
 def new_purchase_type(request):
@@ -102,6 +156,7 @@ def new_purchase_type(request):
             new_type.save()
     return redirect('/')
 
+
 @login_required
 def new_shop(request):
     if request.method == 'POST':
@@ -110,9 +165,10 @@ def new_shop(request):
             new_shop.save()
     return redirect('/')
 
-from django.template.defaulttags import register
 
 # django filter shit
+
+
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)

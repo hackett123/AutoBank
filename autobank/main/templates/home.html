@@ -3,6 +3,7 @@
 <h1 class="title">
     AbaBaba
 </h1>
+<a href="/logout"> Logout</a>
 
 <p>You are currently logged in as <strong>{{user.first_name}}</strong></p>
 
@@ -20,9 +21,23 @@
 </p>
 
 </br>
-<a href="/logout"> Logout</a>
 </br>
-<a href="/stats"> Stats</a>
+<div>
+    <h3 class="subtitle">View Stats in Date Range:</h3>
+    <form method="GET" action="/stats">
+        {% csrf_token %}
+        <div>
+            <label class="label">Start Date:</label>
+            <input name="start_date" class="input is-primary" type="date" placeholder="today">
+        </div>
+        <div>
+            <label class="label">End Date:</label>
+            <input name="end_date" class="input is-primary" type="date" placeholder="today">
+        </div>
+        </br>
+        <button type="submit" class="button is-primary">See Stats</button>
+    </form>
+</div>
 </br>
 <h2 class="title">
     Add Purchase

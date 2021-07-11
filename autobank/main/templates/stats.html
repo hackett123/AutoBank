@@ -13,30 +13,41 @@
         <a href="/logout">Log Out</a>
         </br>
     </p>
+    <p>
+        You are viewing purchases between {{start_date}} and {{end_date}}
+    </p>
+    <p>
+        In this time period, you spent ${{total}}
+    </p>
 </div>
 </br>
-<div>
-    <h3 class="title">All Purchases (By Purchase Type)</h3>
-    {% for purchase_type in purchase_types %}
-    
-    <strong>{{purchase_type}} sum: ${{ type_sum_prices|get_item:purchase_type }}</strong>
-    <ul>
-        {% for purchase in purchase_type.purchases.all %}
-        <li>{{purchase}}</li>
+<div class="columns">
+    <div class="column">
+        <h3 class="title">All Purchases (By Purchase Type)</h3>
+        {% for purchase_type, purchases in purchase_type_purchases.items %}
+        {% if purchases %}
+        <strong>{{purchase_type}} sum: ${{ type_sum_prices|get_item:purchase_type }}</strong>
+        <ul>
+            {% for purchase in purchases %}
+            <li>{{purchase}}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
         {% endfor %}
-    </ul>
-    {% endfor %}
+    </div>
+    <div class="column">
+        <h3 class="title">All Purchases (By Shop)</h3>
+        {% for shop, purchases in shop_purchases.items %}
+        {% if purchases %}
+        <strong>{{shop}} sum: ${{shop_sum_prices|get_item:shop}}</strong>
+        <ul>
+            {% for purchase in purchases %}
+            <li>{{purchase}}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endfor %}
+    </div>
 </div>
 </br>
-<div>
-    <h3 class="title">All Purchases (By Shop)</h3>
-    {% for shop in shops %}
-    <strong>{{shop}} sum: ${{ shop_sum_prices|get_item:shop }}</strong>
-    <ul>
-        {% for purchase in shop.purchases.all %}
-        <li>{{purchase}}</li>
-        {% endfor %}
-    </ul>
-    {% endfor %}
-</div>
 {% endblock %}

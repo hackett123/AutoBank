@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from main.models import PurchaseType, Purchase, Shop
+from main.models import PurchaseType, Purchase, Recurring, Shop
 from django.contrib.auth.decorators import login_required
 
 import csv
@@ -49,6 +49,20 @@ def login_(request):
 def logout_(request):
     logout(request)
     return redirect("/")
+
+@login_required
+def add_recurring(request):
+    if request.method == 'POST':
+        recurring = Recurring.objects.create(
+            price=request.POST['price'],
+            shop=Shop.objects.get(name=request.POST['shop']),
+            description=request.POST['description'],
+            bought_for=request.POST['for_choices'],
+            purchased_by=User.objects.get(username=request.user),
+            frequency=request.POST['frequency']
+        )
+        recurring.save()
+    return redirect('/')
 
 @login_required
 def add_purchase(request):

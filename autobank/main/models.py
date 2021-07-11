@@ -35,3 +35,20 @@ class Purchase(models.Model):
 
     def __add__(self, o):
         return self.price + o.price
+
+# subscriptions, rent, etc
+class Recurring(models.Model):
+    id = models.AutoField(primary_key=True, unique=True)
+    price = models.DecimalField(decimal_places=2, max_digits=10)
+    description = models.TextField()
+    
+    # 1 = yearly, 12 = monthly
+    frequency = models.IntegerField()
+    bought_for = models.CharField(max_length=200)
+
+    # foreign keys
+    purchased_by = models.ForeignKey(User, related_name="subscriptions", on_delete=models.CASCADE)
+    shop = models.ForeignKey(Shop, related_name="subscriptions", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'${self.price} / {"year" if self.frequency == 1 else "month" if self.frequency == 12 else str(self.frequency, "times per year")} from {self.shop}'

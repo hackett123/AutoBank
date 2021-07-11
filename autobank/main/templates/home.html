@@ -12,11 +12,11 @@
     Directions
 </h2>
 <p>
-Add purchases to keep track of our spending across different categories. In the near future, we'll
-have a way to aggregate by types of purchases, over dates and time, who is spending the most, etc.
+    Add purchases to keep track of our spending across different categories. In the near future, we'll
+    have a way to aggregate by types of purchases, over dates and time, who is spending the most, etc.
 
-If you don't see an option you're looking for in <strong>Shop</strong> or <strong>Purchase Type</strong>,
-scroll down to add additional options to the database.
+    If you don't see an option you're looking for in <strong>Shop</strong> or <strong>Purchase Type</strong>,
+    scroll down to add additional options to the database.
 </p>
 
 </br>
@@ -74,6 +74,49 @@ scroll down to add additional options to the database.
         </select>
     </div>
     </br>
+    </br>
+    <button type="submit" class="button is-primary">Add</button>
+</form>
+</br>
+
+<h2 class="title">
+    Add Subscription / Recurring
+</h2>
+<form method="POST" action="/add_recurring">
+    {% csrf_token %}
+    <div>
+        <label class="label">Price:</label>
+        <input name="price" class="input is-primary" type="text" placeholder="Price">
+    </div>
+    </br>
+    <div>
+        <label class="label">Frequency (1 for yearly, 12 for monthly):</label>
+        <input name="frequency" class="input is-primary" type="text" placeholder="Frequency">
+    </div>
+    </br>
+    <div>
+        <label class="label">Shop:</label>
+        <div class="select is-multiple is-primary">
+            <select class="js-example-basic-multiple" name="shop" multiple="multiple">
+                {% for shop in shops %}
+                <option value="{{shop.name}}">{{shop.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    </br>
+    <div>
+        <label class="label">Description (optional):</label>
+        <input name="description" class="input is-primary" type="text" placeholder="Description">
+    </div>
+    <div class="select is-multiple is-primary">
+        <label class="label">Bought For:</label>
+        <select class="js-example-basic-multiple" name="for_choices" multiple="multiple">
+            <option value='MICHELLE'>just michelle</option>
+            <option value='MICHAEL'>just michael</option>
+            <option value='BOTH'>both of us</option>
+        </select>
+    </div>
     </br>
     <button type="submit" class="button is-primary">Add</button>
 </form>

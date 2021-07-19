@@ -6,7 +6,10 @@ from main.models import PurchaseType, Purchase, Recurring, Shop
 from django.contrib.auth.decorators import login_required
 from datetime import date
 
-# Create your views here.
+# graphing libs
+from plotly.offline import plot
+from plotly.graph_objs import Bar
+
 
 def splash(request):
     if request.user.is_authenticated:
@@ -78,6 +81,14 @@ def calc_grouped_sum_prices(purchases):
     return grouped_sum_prices
 
 
+def generate_plot(type_sum_prices):
+    # https://plotly.com/
+    x = [purchase_type.type for purchase_type in type_sum_prices.keys()]
+    y = [float(val) for val in type_sum_prices.values()]
+    plot_div = plot([Bar(x=x, y=y)], output_type='div')
+    return plot_div
+
+
 def helper_stats_common(request, username):
     if request.user.is_authenticated:
         start_date, end_date = stat_date_range_helper(request)
@@ -90,6 +101,11 @@ def helper_stats_common(request, username):
         for_michael, for_michelle, for_both, total = purchases_for_breakdown(
             all_purchases)
 
+        type_plot_div = generate_plot(type_sum_prices)
+        x_shop = [shop.name for shop in shop_sum_prices.keys()]
+        y_shop = [float(val) for val in shop_sum_prices.values()]
+        shop_plot_div = plot([Bar(x=x_shop, y=y_shop)], output_type='div')
+
         return render(request, 'stats.html', {'is_joint': False if username else True,
                                               'purchase_type_purchases': purchase_type_purchases,
                                               'shop_purchases': shop_purchases,
@@ -101,15 +117,17 @@ def helper_stats_common(request, username):
                                               'for_michelle': for_michelle,
                                               'for_both': for_both,
                                               'total': total,
-                                              'user': request.user})
+                                              'user': request.user,
+                                              'type_bar_chart': type_plot_div,
+                                              'shop_bar_chart': shop_plot_div})
 
 
 def joint_stats(request):
     return helper_stats_common(request, None)
 
+
 def stats(request):
     return helper_stats_common(request, request.user)
-
 
 
 def login_(request):

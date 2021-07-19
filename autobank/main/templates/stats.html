@@ -23,10 +23,21 @@
     </p>
     <p>
         In this time period, you spent <strong>${{total}}</strong>. <strong>${{for_both}}</strong> was for both of you,
-        <strong>${{for_michael}}</strong> was for just michael, and <strong>${{for_michelle}}</strong> was for just michelle.
+        <strong>${{for_michael}}</strong> was for just michael, and <strong>${{for_michelle}}</strong> was for just
+        michelle.
     </p>
 </div>
 </br>
+<div>
+    <h4 class="subtitle">Purchases by Type:</h4>
+    {% autoescape off %}
+    {{ type_bar_chart }}
+    {% endautoescape %}
+    <h4 class="subtitle">Purchases by Shop:</h4>
+    {% autoescape off %}
+    {{ shop_bar_chart }}
+    {% endautoescape %}
+</div>
 <div class="columns">
     <div class="column">
         <h3 class="title">All Purchases (By Purchase Type)</h3>

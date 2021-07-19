@@ -4,14 +4,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from main.models import PurchaseType, Purchase, Recurring, Shop
 from django.contrib.auth.decorators import login_required
-
-import csv
-import time
-from django.http import HttpResponse
 from datetime import date
 
 # Create your views here.
-
 
 def splash(request):
     if request.user.is_authenticated:

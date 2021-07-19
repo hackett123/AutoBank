@@ -21,7 +21,7 @@ def splash(request):
     return render(request, "splash.html", {})
 
 
-def purchases_between(start_date, end_date):
+def purchases_between(start_date, end_date, username):
     '''
     retrieve all purchases made between [start_date, ..., end_date] inclusive.
     returns tuple (purchase_type_purchases, shop_purchases) where each is a dictionary
@@ -30,15 +30,17 @@ def purchases_between(start_date, end_date):
     types = PurchaseType.objects.all()
     shops = Shop.objects.all()
 
+    user = User.objects.get(username=username)
+
     purchase_type_purchases = dict()
     for purchase_type in types:
         purchase_type_purchases[purchase_type] = purchase_type.purchases.filter(
-            date__range=[start_date, end_date])
+            date__range=[start_date, end_date], purchased_by=user)
 
     shop_purchases = dict()
     for shop in shops:
         shop_purchases[shop] = shop.purchases.filter(
-            date__range=[start_date, end_date])
+            date__range=[start_date, end_date], purchased_by=user)
 
     return (purchase_type_purchases, shop_purchases)
 
@@ -48,7 +50,7 @@ def stats(request):
         start_date, end_date = date(2021, 7, 1), date.today()
         if 'start_date' in request.GET and 'end_date' in request.GET and request.GET['start_date'] and request.GET['end_date']:
             start_date, end_date = request.GET['start_date'], request.GET['end_date']
-        purchase_type_purchases, shop_purchases = purchases_between(start_date, end_date)
+        purchase_type_purchases, shop_purchases = purchases_between(start_date, end_date, request.user)
             
         # type_sum_prices = {purchase_type:sum([purchase.price for purchase in purchases]) for purchase_type,purchases in purchase_type_purchases.items()}
         type_sum_prices = dict()

@@ -23,7 +23,7 @@
 </br>
 </br>
 <div>
-    <h3 class="subtitle">View Stats in Date Range:</h3>
+    <h3 class="subtitle">View Individual Stats in Date Range:</h3>
     <form method="GET" action="/stats">
         {% csrf_token %}
         <div>
@@ -35,7 +35,22 @@
             <input name="end_date" class="input is-primary" type="date" placeholder="today">
         </div>
         </br>
-        <button type="submit" class="button is-primary">See Stats</button>
+        <button type="submit" class="button is-primary">See Individual Stats</button>
+    </form>
+    </br>
+    <h3 class="subtitle">View Joint Stats in Date Range:</h3>
+    <form method="GET" action="/joint_stats">
+        {% csrf_token %}
+        <div>
+            <label class="label">Start Date:</label>
+            <input name="start_date" class="input is-primary" type="date" placeholder="today">
+        </div>
+        <div>
+            <label class="label">End Date:</label>
+            <input name="end_date" class="input is-primary" type="date" placeholder="today">
+        </div>
+        </br>
+        <button type="submit" class="button is-primary">See Joint Stats</button>
     </form>
 </div>
 </br>

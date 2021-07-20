@@ -77,8 +77,14 @@ WSGI_APPLICATION = 'autobank.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(BASE_DIR / "db.sqlite3"),
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': os.environ['RDS_HOSTNAME'],
+        'PORT': os.environ['RDS_PORT'],
+        'NAME': os.environ['RDS_DB_NAME'],
+        'USER': os.environ['RDS_USERNAME'],
+        'PASSWORD': os.environ['RDS_PASSWORD']
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': str(BASE_DIR / "db.sqlite3"),
     }
 }
 

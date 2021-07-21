@@ -31,10 +31,13 @@ class Purchase(models.Model):
     purchased_by = models.ForeignKey(User, related_name="purchases", on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.amount} of ${self.price} at {self.shop.name} for "{self.description}" by {self.purchased_by.username} on {self.date}'
+        return f'{self.amount} of ${self.price} at {self.shop.name} for "{self.description}" by {self.purchased_by.username} for {self.bought_for} on {self.date}'
 
     def __add__(self, o):
         return self.price + o.price
+
+    def total_price(self):
+        return self.price * self.amount
 
 # subscriptions, rent, etc
 class Recurring(models.Model):

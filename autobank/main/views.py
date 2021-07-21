@@ -55,11 +55,11 @@ def purchases_for_breakdown(purchases):
     For a list of purchase objects, return a tuple ($michael only, $michelle only, $both, $total)
     breaking down what portion of purchases were purchased for who
     '''
-    total = sum([purchase.price for purchase in purchases])
+    total = sum([purchase.total_price() for purchase in purchases])
     just_michael = sum(
-        [purchase.price for purchase in purchases if purchase.bought_for == 'MICHAEL'])
+        [purchase.total_price() for purchase in purchases if purchase.bought_for == 'MICHAEL'])
     just_michelle = sum(
-        [purchase.price for purchase in purchases if purchase.bought_for == 'MICHELLE'])
+        [purchase.total_price() for purchase in purchases if purchase.bought_for == 'MICHELLE'])
     both = total - (just_michael + just_michelle)
     return (just_michael, just_michelle, both, total)
 
@@ -77,7 +77,7 @@ def calc_grouped_sum_prices(purchases):
     grouped_sum_prices = dict()
     for grouping, purchases in purchases.items():
         grouped_sum_prices[grouping] = sum(
-            [purchase.price for purchase in purchases])
+            [purchase.total_price() for purchase in purchases])
     return grouped_sum_prices
 
 

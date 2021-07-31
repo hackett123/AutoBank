@@ -2,7 +2,7 @@ from django.template.defaulttags import register
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from main.models import PurchaseType, Purchase, Recurring, Shop
+from main.models import PurchaseType, Purchase, Recurring, Shop, InterPayment
 from django.contrib.auth.decorators import login_required
 from datetime import date
 
@@ -168,13 +168,8 @@ def add_recurring(request):
 def add_purchase(request):
     if request.method == 'POST':
         purchase_type = request.POST.getlist("type_choices")[0]
-
-        print(f'purchase_type received is {purchase_type}')
         purchase_type_obj = PurchaseType.objects.get(type=purchase_type)
-        print(f'object found is {purchase_type_obj}')
-        print(f'Creating purchase with fields {request.POST["price"]}',
-              f'{request.POST["shop"]}, {request.POST["description"]}, {request.POST["amount"]}', purchase_type_obj, User.objects.get(username=request.user))
-
+        
         # if amount is null default to 1
         amount = request.POST['amount'] if request.POST['amount'] else 1
         dt = request.POST['date'] if request.POST['date'] else date.today()
@@ -194,6 +189,28 @@ def add_purchase(request):
         return redirect('/')
     else:
         return redirect('/')
+
+@login_required
+def add_inter_payment(request):
+    if request.method == 'POST':
+        # get user objects
+        from_user = User.objects.get(username=request.user)
+        to_user = None
+        if (from_user.first_name.lower() == 'michelle'):
+            to_user = User.objects.get(username='michael')
+        else:
+            to_user = User.objects.get(username='michelle')
+
+        # create and save obj
+        inter_payment = InterPayment.objects.create(
+            price=request.POST['price'],
+            from_user=from_user,
+            to_user=to_user,
+            payment_for=request.POST['payment_for'],
+            date = request.POST['date'] if request.POST['date'] else date.today()
+        )
+        inter_payment.save()
+    return redirect ('/')
 
 
 @login_required

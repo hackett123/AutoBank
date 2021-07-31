@@ -21,4 +21,5 @@ Right now we have a primitive SDLC. Changes are pushed to git, then we ssh to th
 ## CI and CD TODO (if we want)
 
 - Look into AWS CodeDeploy
+  - or alternatively: write a cronjob that runs a script to see if there's a new commit on main, and if there is, pull and restart the server.
 - Look into automating the ec2 setup (already written in `ec2_setup.sh`)

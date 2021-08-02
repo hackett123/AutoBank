@@ -68,4 +68,13 @@ class InterPayment(models.Model):
     payment_for = models.CharField(max_length=200)
 
     def __str__(self):
-        return f'${self.price} sent from {self.from_user.first_name} to {self.to_user.first_name} for {payment_for}'
+        return f'${self.price} sent from {self.from_user.first_name} to {self.to_user.first_name} for {self.payment_for}'
+
+class Paycheck(models.Model):
+    id = models.AutoField(primary_key=True, unique=True)
+    user = models.ForeignKey(User, related_name="paychecks", on_delete=models.CASCADE)
+    amount = models.DecimalField(decimal_places=2, max_digits=10)
+    date = models.DateField(default=datetime.today)
+
+    def __str__(self):
+        return f'${self.amount} paycheck for {self.user.first_name} on {self.date}'

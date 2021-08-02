@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from main.views import add_recurring, splash, login_, logout_, add_purchase, new_purchase_type, new_shop, stats, joint_stats, add_inter_payment
+from main.views import add_recurring, splash, login_, logout_, add_purchase, new_purchase_type, new_shop, stats, joint_stats, add_inter_payment, add_paycheck
 from django.urls import path # avoid regex
 
 urlpatterns = [
@@ -32,4 +32,5 @@ urlpatterns = [
     path('stats', stats, name='stats'),
     path('joint_stats', joint_stats, name='joint_stats'),
     path('add_inter_payment', add_inter_payment, name='add_inter_payment'),
+    path('add_paycheck', add_paycheck, name='add_paycheck')
 ]

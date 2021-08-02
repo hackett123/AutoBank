@@ -2,7 +2,7 @@ from django.template.defaulttags import register
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from main.models import PurchaseType, Purchase, Recurring, Shop, InterPayment
+from main.models import PurchaseType, Purchase, Recurring, Shop, InterPayment, Paycheck
 from django.contrib.auth.decorators import login_required
 from datetime import date
 
@@ -211,6 +211,21 @@ def add_inter_payment(request):
         )
         inter_payment.save()
     return redirect ('/')
+
+@login_required
+def add_paycheck(request):
+    if request.method == 'POST':
+        user = User.objects.get(username=request.user)
+        amount = request.POST['amount']
+        dt = request.POST['date'] if request.POST['date'] else date.today()
+
+        paycheck = Paycheck.objects.create(
+            amount = amount,
+            user = user,
+            date = dt
+        )
+        paycheck.save()
+    return redirect('/')
 
 
 @login_required

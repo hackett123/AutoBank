@@ -6,6 +6,10 @@
 
 We have deployed our backend server to EC2 where it is running on a single t2.micro instance that we manually ssh into when we need to pull changes and restart the server.
 
+### Frontend Site
+
+We have a django site running at http://ec2-3-89-160-69.compute-1.amazonaws.com:8000/ until we decide to pay for a real domain name.
+
 ### Backend Server
 
 **Django** is our web server of choice. It connects to our remote MySQL db and handles all http requests.
@@ -13,6 +17,14 @@ We have deployed our backend server to EC2 where it is running on a single t2.mi
 ### Database
 
 We are hosting a remote MySQL db on AWS RDS for around $12/month once the free tier expires.
+
+## Additional Components
+
+### Backup DB
+
+### Weekly Spending Emails
+
+### Weekly Budget Emails
 
 ## Development
 

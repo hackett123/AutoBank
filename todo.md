@@ -8,10 +8,10 @@
 - Deploy site to ec2
 - Add models for Interpayments, Subscription
 - Write backup script (make json files in s3) and deploy to Lambda
+- Add Paycheck model to Django
 
 ## To do
 
 - Put together code deploy rather than manual deployments through ssh/tmux
-- Add Paycheck model to Django
 - Add interpayments, subscription, paycheck to stats page
 - Send weekly and monthly spending/budget reports

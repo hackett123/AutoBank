@@ -1,0 +1,23 @@
+{% extends 'master.html' %}
+{% block body %}
+<h2 class="title">
+    Add Payment Between Each Other (ie a Venmo)
+</h2>
+<form method="POST" action="/add_inter_payment">
+    {% csrf_token %}
+    <div>
+        <label class="label">Date:</label>
+        <input name="date" class="input is-primary" type="date" placeholder="today">
+    </div>
+    <div>
+        <label class="label">Price:</label>
+        <input name="price" class="input is-primary" type="text" placeholder="Price">
+    </div>
+    <div>
+        <label class="label">Description (required):</label>
+        <input name="payment_for" class="input is-primary" type="text" placeholder="Description">
+    </div>
+    </br>
+    <button type="submit" class="button is-primary">Add</button>
+</form>
+{% endblock %}

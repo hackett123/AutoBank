@@ -21,37 +21,17 @@
 </p>
 
 </br>
-</br>
 <div>
-    <h3 class="subtitle">View Individual Stats in Date Range:</h3>
-    <form method="GET" action="/stats">
-        {% csrf_token %}
-        <div>
-            <label class="label">Start Date:</label>
-            <input name="start_date" class="input is-primary" type="date" placeholder="today">
-        </div>
-        <div>
-            <label class="label">End Date:</label>
-            <input name="end_date" class="input is-primary" type="date" placeholder="today">
-        </div>
-        </br>
-        <button type="submit" class="button is-primary">See Individual Stats</button>
-    </form>
-    </br>
-    <h3 class="subtitle">View Joint Stats in Date Range:</h3>
-    <form method="GET" action="/joint_stats">
-        {% csrf_token %}
-        <div>
-            <label class="label">Start Date:</label>
-            <input name="start_date" class="input is-primary" type="date" placeholder="today">
-        </div>
-        <div>
-            <label class="label">End Date:</label>
-            <input name="end_date" class="input is-primary" type="date" placeholder="today">
-        </div>
-        </br>
-        <button type="submit" class="button is-primary">See Joint Stats</button>
-    </form>
+    <h2 class="title">
+        Other Options:
+    </h2>
+    <ul>
+        <li><a href="/see_stats">See Stats</a></li>
+        <li><a href="/add_paycheck">Add Paycheck</a></li>
+        <li><a href="/add_inter_payment">Add Payment to each other</a></li>
+        <li><a href="/add_recurring">Add Subscription or Recurring Purchase</a></li>
+        <li><a href="/add_purchase_type_or_shop">Add New Purchase Type or Shop</a></li>
+    </ul>
 </div>
 </br>
 <h2 class="title">
@@ -108,114 +88,4 @@
     <button type="submit" class="button is-primary">Add</button>
 </form>
 </br>
-
-<h2 class="title">
-    Add Subscription / Recurring
-</h2>
-<form method="POST" action="/add_recurring">
-    {% csrf_token %}
-    <div>
-        <label class="label">Price:</label>
-        <input name="price" class="input is-primary" type="text" placeholder="Price">
-    </div>
-    </br>
-    <div>
-        <label class="label">Frequency (1 for yearly, 12 for monthly):</label>
-        <input name="frequency" class="input is-primary" type="text" placeholder="Frequency">
-    </div>
-    </br>
-    <div>
-        <label class="label">Shop:</label>
-        <div class="select is-multiple is-primary">
-            <select class="js-example-basic-multiple" name="shop" multiple="multiple">
-                {% for shop in shops %}
-                <option value="{{shop.name}}">{{shop.name}}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
-    </br>
-    <div>
-        <label class="label">Description (optional):</label>
-        <input name="description" class="input is-primary" type="text" placeholder="Description">
-    </div>
-    <div class="select is-multiple is-primary">
-        <label class="label">Bought For:</label>
-        <select class="js-example-basic-multiple" name="for_choices" multiple="multiple">
-            <option value='MICHELLE'>just michelle</option>
-            <option value='MICHAEL'>just michael</option>
-            <option value='BOTH'>both of us</option>
-        </select>
-    </div>
-    </br>
-    <button type="submit" class="button is-primary">Add</button>
-</form>
-</br>
-
-<h2 class="title">
-    New Purchase Type
-</h2>
-<form method="POST" action="/new_purchase_type">
-    {% csrf_token %}
-    <div>
-        <label class="label">Type:</label>
-        <input name="type" class="input is-primary" type="text" placeholder="Type">
-    </div>
-    </br>
-    <button type="submit" class="button is-primary">Add</button>
-</form>
-</br>
-<h2 class="title">
-    New Shop
-</h2>
-</br>
-<form method="POST" action="/new_shop">
-    {% csrf_token %}
-    <div>
-        <label class="label">Shop:</label>
-        <input name="shop" class="input is-primary" type="text" placeholder="Shop Name">
-    </div>
-    </br>
-    <button type="submit" class="button is-primary">Add</button>
-</form>
-</br>
-
-<h2 class="title">
-    Add Paycheck
-</h2>
-<form method="POST" action="/add_paycheck">
-    {% csrf_token %}
-    <div>
-        <label class="label">Date:</label>
-        <input name="date" class="input is-primary" type="date" placeholder="today">
-    </div>
-    <div>
-        <label class="label">Amount:</label>
-        <input name="amount" class="input is-primary" type="text" placeholder="$">
-    </div>
-    </br>
-    <button type="submit" class="button is-primary">Add</button>
-</form>
-
-<h2 class="title">
-    Add Payment Between Each Other (ie a Venmo)
-</h2>
-<form method="POST" action="/add_inter_payment">
-    {% csrf_token %}
-    <div>
-        <label class="label">Date:</label>
-        <input name="date" class="input is-primary" type="date" placeholder="today">
-    </div>
-    <div>
-        <label class="label">Price:</label>
-        <input name="price" class="input is-primary" type="text" placeholder="Price">
-    </div>
-    <div>
-        <label class="label">Description (required):</label>
-        <input name="payment_for" class="input is-primary" type="text" placeholder="Description">
-    </div>
-    </br>
-    <button type="submit" class="button is-primary">Add</button>
-</form>
-
 {% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'master.html' %}
+{% block body %}
+<h2 class="title">
+    New Purchase Type
+</h2>
+<form method="POST" action="/new_purchase_type">
+    {% csrf_token %}
+    <div>
+        <label class="label">Type:</label>
+        <input name="type" class="input is-primary" type="text" placeholder="Type">
+    </div>
+    </br>
+    <button type="submit" class="button is-primary">Add</button>
+</form>
+</br>
+<h2 class="title">
+    New Shop
+</h2>
+</br>
+<form method="POST" action="/new_shop">
+    {% csrf_token %}
+    <div>
+        <label class="label">Shop:</label>
+        <input name="shop" class="input is-primary" type="text" placeholder="Shop Name">
+    </div>
+    </br>
+    <button type="submit" class="button is-primary">Add</button>
+</form>
+{% endblock %}

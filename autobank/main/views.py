@@ -19,6 +19,11 @@ def splash(request):
     return render(request, "splash.html", {})
 
 
+@login_required
+def see_stats(request):
+    return render(request, "see_stats.html", {'user': request.user})
+
+
 def purchases_between(start_date, end_date, username=None):
     '''
     retrieve all purchases made between [start_date, ..., end_date] inclusive.
@@ -161,6 +166,10 @@ def add_recurring(request):
             frequency=request.POST['frequency']
         )
         recurring.save()
+    elif request.method == 'GET':
+        types = PurchaseType.objects.all()
+        shops = Shop.objects.all()
+        return render(request, 'add_recurring.html', {'user': request.user, 'purchase_types': types, 'shops': shops})
     return redirect('/')
 
 
@@ -169,7 +178,7 @@ def add_purchase(request):
     if request.method == 'POST':
         purchase_type = request.POST.getlist("type_choices")[0]
         purchase_type_obj = PurchaseType.objects.get(type=purchase_type)
-        
+
         # if amount is null default to 1
         amount = request.POST['amount'] if request.POST['amount'] else 1
         dt = request.POST['date'] if request.POST['date'] else date.today()
@@ -190,6 +199,7 @@ def add_purchase(request):
     else:
         return redirect('/')
 
+
 @login_required
 def add_inter_payment(request):
     if request.method == 'POST':
@@ -207,10 +217,13 @@ def add_inter_payment(request):
             from_user=from_user,
             to_user=to_user,
             payment_for=request.POST['payment_for'],
-            date = request.POST['date'] if request.POST['date'] else date.today()
+            date=request.POST['date'] if request.POST['date'] else date.today()
         )
         inter_payment.save()
-    return redirect ('/')
+    elif request.method == 'GET':
+        return render(request, "add_interpayment.html", {'user': request.user})
+    return redirect('/')
+
 
 @login_required
 def add_paycheck(request):
@@ -220,12 +233,19 @@ def add_paycheck(request):
         dt = request.POST['date'] if request.POST['date'] else date.today()
 
         paycheck = Paycheck.objects.create(
-            amount = amount,
-            user = user,
-            date = dt
+            amount=amount,
+            user=user,
+            date=dt
         )
         paycheck.save()
+    elif request.method == 'GET':
+        return render(request, "add_paycheck.html", {'user': request.user})
     return redirect('/')
+
+
+@login_required
+def add_purchase_type_or_shop(request):
+    return render(request, 'add_purchase_type_or_shop.html', {'user': request.user})
 
 
 @login_required

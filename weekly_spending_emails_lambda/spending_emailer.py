@@ -30,6 +30,8 @@ def get_rows_to_str(table_name):
                              db='', charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
     cur = connection.cursor()
     cur.execute(f'use {os.environ["RDS_DB_NAME"]}')
+
+    # TODO - rewrite query
     cur.execute(f'SELECT * FROM {table_name} WHERE DAY(date)="{day}" AND MONTH(date)="{month}" AND YEAR(date)="{year}"')
 
     items = [row for row in cur]
@@ -45,18 +47,7 @@ def get_rows_to_str(table_name):
 
 def spending_emailer():
     # get last week's purchases
-
-    daily_purchases = get_rows_to_str('main_purchase')
-    daily_interpayments = get_rows_to_str('main_interpayment')
-    
-    encoded_purchases = daily_purchases.encode("utf-8")
-    encoded_interpayments = daily_purchases.encode("utf-8")
-
-    if len(encoded_purchases):
-        s3.put_object(Bucket=BUCKET_NAME, Key=file_path + '/purchases.json', Body=encoded_purchases)
-    if len(encoded_interpayments):
-        s3.put_object(Bucket=BUCKET_NAME, Key=file_path + '/interpayments.json', Body=encoded_interpayments)
-    
+    pass
 
 # for local testing
 if __name__ == '__main__':

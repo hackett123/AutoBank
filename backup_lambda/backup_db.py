@@ -21,23 +21,21 @@ import datetime
 
 BUCKET_NAME = 'autobank-abababa'
 
-def get_yesterday_dt():
+def datetime_n_days_back(days_back):
     today = datetime.datetime.today()
-    yesterday = today - datetime.timedelta(days=1)
-    return yesterday
+    return today - datetime.timedelta(days=days_back)
 
-def determine_path():
-    yesterday = get_yesterday_dt()
-    year, month, day = yesterday.strftime('%Y-%m-%d').split('-')
+def determine_path(target_date):
+    year, month, day = target_date.strftime('%Y-%m-%d').split('-')
     path = f'{year}/{month}/{day}'
     print(path)
     return path
 
-def get_rows_to_str(table_name):
-    yesterday = get_yesterday_dt().date()
-    day = yesterday.day
-    month = yesterday.month
-    year = yesterday.year
+def get_rows_to_str(table_name, dt):
+    
+    day = dt.day
+    month = dt.month
+    year = dt.year
 
     # cursor object executes a query and stores the result in itself, which is an iterator.
     connection = pymysql.connect(host=os.environ['RDS_HOSTNAME'], user=os.environ['RDS_USERNAME'], password=os.environ['RDS_PASSWORD'],
@@ -61,19 +59,24 @@ def lambda_handler(event, context):
     # create s3 objs
     session = boto3.Session()
     s3 = session.client("s3")
-    print(s3)
-    # bucket = s3.Bucket(BUCKET_NAME)
-    file_path = determine_path()
-    daily_purchases = get_rows_to_str('main_purchase')
-    daily_interpayments = get_rows_to_str('main_interpayment')
-    
-    encoded_purchases = daily_purchases.encode("utf-8")
-    encoded_interpayments = daily_interpayments.encode("utf-8")
 
-    if len(encoded_purchases):
-        s3.put_object(Bucket=BUCKET_NAME, Key=file_path + '/purchases.json', Body=encoded_purchases)
-    if len(encoded_interpayments):
-        s3.put_object(Bucket=BUCKET_NAME, Key=file_path + '/interpayments.json', Body=encoded_interpayments)
+    # read last 10 days and backup. means if you forget to add a purcahse for over a week it will be recorded still
+    for i in range(1, 10):
+        dt = datetime_n_days_back(i).date()
+        daily_purchases = get_rows_to_str('main_purchase', dt)
+        daily_interpayments = get_rows_to_str('main_interpayment', dt)
+        
+        encoded_purchases = daily_purchases.encode("utf-8")
+        encoded_interpayments = daily_interpayments.encode("utf-8")
+
+        file_path = determine_path(dt)
+        if len(encoded_purchases):
+            s3.put_object(Bucket=BUCKET_NAME, Key=file_path + '/purchases.json', Body=encoded_purchases)
+            print(f'wrote purchases for {i} days ago')
+        if len(encoded_interpayments):
+            s3.put_object(Bucket=BUCKET_NAME, Key=file_path + '/interpayments.json', Body=encoded_interpayments)
+            print(f'wrote interpayments for {i} days ago')
+    
     
 
 # for local testing

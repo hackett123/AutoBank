@@ -15,6 +15,10 @@ import json
 import os
 import pymysql
 import datetime
+import smtplib, ssl
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
 
 def get_datetimes_for_last_week():
     # returns value [0, ..., 6] for [Monday, ..., Sunday]
@@ -145,11 +149,7 @@ To see a more detailed breakdown, please visit the abababa stats page,
 or inspect the files in s3.
     """
 
-import smtplib, ssl, email
-from email import encoders
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.application import MIMEApplication
+
 def send_email(email_content, start_dt, end_dt, attachments):
     port = 465  # For SSL
     smtp_server = "smtp.gmail.com"
@@ -179,7 +179,8 @@ def aws_interactions(uploadables, s3_loc):
     session = boto3.Session()
     s3 = session.client("s3")
     for filename, object_content in uploadables.items():
-        upload_to_s3(s3, object_content, f'weekly_statements/{s3_loc}/{filename}')
+        for_s3_filename = filename.split('/')[-1]
+        upload_to_s3(s3, object_content, f'weekly_statements/{s3_loc}/{for_s3_filename}')
 
 # Warning: This does not scale at all lol
 def upload_to_s3(s3_obj, json_str, path):
@@ -202,7 +203,10 @@ def make_temp_files(file_dict):
 
 def delete_temp_files(file_dict):
     for filename, _ in file_dict.items():
-        os.remove(os.path.basename(filename))
+        os.remove(os.path.basename(filename.split('/')[-1]))
+        
+def lambda_handler(context, event):
+    return spending_emailer()
 
 def spending_emailer():
     # range for our emails and aggregates
@@ -222,9 +226,9 @@ def spending_emailer():
 
     # maintain key/value store for what to send to s3. format (filename => object)
     uploadables_to_s3 = {
-        'by_shop.json': shop_purchases,
-        'by_type.json': type_purchases,
-        'email.txt': email_content
+        '/tmp/by_shop.json': shop_purchases,
+        '/tmp/by_type.json': type_purchases,
+        '/tmp/email.txt': email_content
     }
 
     # create temporary files. returns filenames.
@@ -236,6 +240,7 @@ def spending_emailer():
     # finally, send email
     send_email(email_content, last_sunday_dt, this_saturday_dt, attachment_locations)
 
+    # we don't execute this on lambda bc it's read-only
     delete_temp_files(uploadables_to_s3)
 
 # for local testing

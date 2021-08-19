@@ -26,6 +26,11 @@
         <strong>${{for_michael}}</strong> was for just michael, and <strong>${{for_michelle}}</strong> was for just
         michelle.
     </p>
+    <p>
+        {% if is_joint %}
+        Download the purchase breakdown as a csv <a href="/download_joint_purchases?start_date={{start_date}}&end_date={{ end_date }}">here</a>.
+        {% endif %}
+    </p>
 </div>
 </br>
 <div>

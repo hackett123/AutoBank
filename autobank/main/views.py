@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from main.models import PurchaseType, Purchase, Recurring, Shop, InterPayment, Paycheck
 from django.contrib.auth.decorators import login_required
-from datetime import date
+from datetime import date, datetime
 
 # graphing libs
 from plotly.offline import plot
@@ -22,6 +22,38 @@ def splash(request):
 @login_required
 def see_stats(request):
     return render(request, "see_stats.html", {'user': request.user})
+
+# Should provide a start date and end date and let user download a csv consisting of (purchase type, michael spent, michelle spent)
+# TODO - some of this is repeat logic, so break it out
+import csv
+from django.http import HttpResponse
+from dateutil.parser import parse
+@login_required
+def download_joint_purchases(request):
+    types = PurchaseType.objects.all()
+    start_date, end_date = stat_date_range_helper(request)
+    start_date, end_date = parse(start_date), parse(end_date)
+    print(start_date, end_date)
+    purchase_type_purchases = {purchase_type: purchase_type.purchases.filter(
+            date__range=[start_date, end_date]).filter(bought_for='BOTH') for purchase_type in types}
+    type_sum_prices_michael = calc_grouped_sum_prices_for(purchase_type_purchases, 'michael')
+    type_sum_prices_michelle = calc_grouped_sum_prices_for(purchase_type_purchases, 'michelle')
+
+    # format is (purchase type -> (michael amount, michelle amount))
+    combined_for_csv = dict()
+    for k, v in type_sum_prices_michael.items():
+        combined_for_csv[k] = (v, type_sum_prices_michelle[k])
+
+    response = HttpResponse(
+        content_type='text/csv',
+        headers={'Content-Disposition': f'attachment; filename="joint_purchases_{start_date}_to_{end_date}.csv"'},
+    )
+    writer = csv.writer(response)
+    writer.writerow(['Purchase Type', 'Michael', 'Michelle'])
+    for k, v in combined_for_csv.items():
+        writer.writerow([k, v[0], v[1]])
+    return response
+
 
 
 def purchases_between(start_date, end_date, username=None):
@@ -123,7 +155,12 @@ def helper_stats_common(request, username):
         y_shop = [float(val) for val in shop_sum_prices.values()]
         shop_plot_div = plot([Bar(x=x_shop, y=y_shop)], output_type='div')
 
+        print('sending out: ', start_date)
+        print('sending out: ', end_date)
+
         return render(request, 'stats.html', {'is_joint': False if username else True,
+                                              'start_date': start_date,
+                                              'end_date': end_date,
                                               'purchase_type_purchases': purchase_type_purchases,
                                               'shop_purchases': shop_purchases,
                                               'type_sum_prices': type_sum_prices,

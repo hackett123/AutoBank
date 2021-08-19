@@ -43,7 +43,10 @@
         <h3 class="title">All Purchases (By Purchase Type)</h3>
         {% for purchase_type, purchases in purchase_type_purchases.items %}
         {% if purchases %}
-        <strong>{{purchase_type}} sum: ${{ type_sum_prices|get_item:purchase_type }}</strong>
+        <strong>{{purchase_type}} sum: ${{ type_sum_prices|get_item:purchase_type}} total</strong>
+        {% if type_sum_prices_michael %} ${{type_sum_prices_michael|get_item:purchase_type}} by Michael {% endif %}
+        {% if type_sum_prices_michelle %} ${{type_sum_prices_michelle|get_item:purchase_type}} by Michelle {% endif %}
+        
         <ul>
             {% for purchase in purchases %}
             <li>{{purchase}}</li>
@@ -57,6 +60,8 @@
         {% for shop, purchases in shop_purchases.items %}
         {% if purchases %}
         <strong>{{shop}} sum: ${{shop_sum_prices|get_item:shop}}</strong>
+        {% if shop_sum_prices_michael %} ${{shop_sum_prices_michael|get_item:shop}} by Michael {% endif %}
+        {% if shop_sum_prices_michelle %} ${{shop_sum_prices_michelle|get_item:shop}} by Michelle {% endif %}
         <ul>
             {% for purchase in purchases %}
             <li>{{purchase}}</li>

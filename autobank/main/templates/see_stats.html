@@ -4,7 +4,16 @@
     See Stats
 </h1>
 <div>
+    <p>
+        <strong>Suggested reviewing workflow:</strong> First, begin by looking at joint stats on a weekly basis. There, you will see the purchases
+        you each made on items shared between you. For each category, you will see a breakdown of costs and can determine offline
+        what ratio of purchases should be covered by each person and an interpayment can be made if necessary. Then, go into the
+        individual stats pages; review your spending for things you purchased solely for yourself and what you purchased solely
+        for your partner. Determine weekly what purchases made for your partner should be converted into an interpayment.
+    </p>
+    </br>
     <h3 class="subtitle">View Individual Stats in Date Range:</h3>
+    This will show you the purchases that you yourself have made, either for yourself, your partner, or both of you.
     <form method="GET" action="/stats">
         {% csrf_token %}
         <div>
@@ -20,6 +29,7 @@
     </form>
     </br>
     <h3 class="subtitle">View Joint Stats in Date Range:</h3>
+    This will show you the purchases you both have made for both of you - that is, shared purchases and expenses.
     <form method="GET" action="/joint_stats">
         {% csrf_token %}
         <div>

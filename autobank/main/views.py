@@ -29,6 +29,8 @@ def purchases_between(start_date, end_date, username=None):
     retrieve all purchases made between [start_date, ..., end_date] inclusive.
     returns tuple (purchase_type_purchases, shop_purchases) where each is a dictionary
     from type / shop -> [purchase list]
+
+    If no username is provided, we ONLY pull purchases meant for both parties
     '''
     types = PurchaseType.objects.all()
     shops = Shop.objects.all()
@@ -44,9 +46,9 @@ def purchases_between(start_date, end_date, username=None):
             date__range=[start_date, end_date], purchased_by=user) for shop in shops}
     else:
         purchase_type_purchases = {purchase_type: purchase_type.purchases.filter(
-            date__range=[start_date, end_date]) for purchase_type in types}
+            date__range=[start_date, end_date]).filter(bought_for='BOTH') for purchase_type in types}
         shop_purchases = {shop: shop.purchases.filter(
-            date__range=[start_date, end_date]) for shop in shops}
+            date__range=[start_date, end_date]).filter(bought_for='BOTH') for shop in shops}
 
     all_purchases = []
     for purchases in shop_purchases.values():
@@ -77,6 +79,13 @@ def stat_date_range_helper(request):
         end_date = request.GET['end_date']
     return (start_date, end_date)
 
+def calc_grouped_sum_prices_for(purchases, username):
+    grouped_sum_prices = dict()
+    grouped_sum_prices = dict()
+    for grouping, purchases in purchases.items():
+        grouped_sum_prices[grouping] = sum(
+            [purchase.total_price() for purchase in purchases if User.objects.get(username=purchase.purchased_by).username == username])
+    return grouped_sum_prices
 
 def calc_grouped_sum_prices(purchases):
     grouped_sum_prices = dict()
@@ -103,6 +112,9 @@ def helper_stats_common(request, username):
         type_sum_prices, shop_sum_prices = calc_grouped_sum_prices(
             purchase_type_purchases), calc_grouped_sum_prices(shop_purchases)
 
+        type_sum_prices_michael, shop_sum_prices_michael = calc_grouped_sum_prices_for(purchase_type_purchases, 'michael'), calc_grouped_sum_prices_for(shop_purchases, 'michael')
+        type_sum_prices_michelle, shop_sum_prices_michelle = calc_grouped_sum_prices_for(purchase_type_purchases, 'michelle'), calc_grouped_sum_prices_for(shop_purchases, 'michelle')
+
         for_michael, for_michelle, for_both, total = purchases_for_breakdown(
             all_purchases)
 
@@ -115,7 +127,11 @@ def helper_stats_common(request, username):
                                               'purchase_type_purchases': purchase_type_purchases,
                                               'shop_purchases': shop_purchases,
                                               'type_sum_prices': type_sum_prices,
+                                              'type_sum_prices_michael': type_sum_prices_michael,
+                                              'type_sum_prices_michelle': type_sum_prices_michelle,
                                               'shop_sum_prices': shop_sum_prices,
+                                              'shop_sum_prices_michael': shop_sum_prices_michael,
+                                              'shop_sum_prices_michelle': shop_sum_prices_michelle,
                                               'start_date': start_date,
                                               'end_date': end_date,
                                               'for_michael': for_michael,
